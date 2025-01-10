@@ -55,3 +55,4 @@ dkms.conf
 test/build
 src/build
 temp.c
+test.template
