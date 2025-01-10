@@ -56,3 +56,5 @@ test/build
 src/build
 temp.c
 test.template
+coverage.info
+/out

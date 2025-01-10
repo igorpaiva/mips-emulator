@@ -1,5 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g -Iinclude -I$(TEST_DIR)/rktest
+CFLAGS = -Wall -Wextra -g -Iinclude -I$(TEST_DIR)/rktest -fprofile-arcs -ftest-coverage
+LDFLAGS = -lgcov --coverage
 SRC_DIR = src
 BUILD_DIR = $(SRC_DIR)/build
 TEST_DIR = test
@@ -44,5 +45,9 @@ run: $(EXEC)
 test: $(TEST_EXEC)
 	./$(TEST_EXEC)
 
+coverage: test
+	lcov --capture --directory . --output-file coverage.info
+	genhtml coverage.info --output-directory out
+
 clean:
-	rm -rf $(BUILD_DIR) $(TEST_BUILD_DIR)
+	rm -rf $(BUILD_DIR) $(TEST_BUILD_DIR) *.gcda *.gcno coverage.info out
