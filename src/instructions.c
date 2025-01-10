@@ -2,6 +2,38 @@
 
 // Arithmetic and Logical Instructions
 
+void decode_instruction(uint32_t instruction) {
+
+    uint8_t opcode = (instruction >> 26) & 0x3F;
+    uint8_t rs = (instruction >> 21) & 0x1F;
+    uint8_t rt = (instruction >> 16) & 0x1F;
+    uint8_t rd = (instruction >> 11) & 0x1F;
+    uint8_t shamt = (instruction >> 6) & 0x1F;
+    uint8_t funct = instruction & 0x3F;
+    int16_t immediate = instruction & 0xFFFF;
+
+    switch (opcode) {
+        
+        case 0x00:
+            if (funct == 0x0C) {  // syscall
+                syscall();
+            }
+            break;
+        case 0xF:  // lui
+            lui(rt, immediate);
+            break;
+        case 0xD:  // ori
+            ori(rt, rs, immediate);
+            break;
+        case 0x8:  // addi
+            addi(rt, rs, immediate);
+            break;
+        default:
+            log_error("Unknown instruction at pc = %d\n", pc);
+            break;
+    }
+}
+
 void add(uint8_t rd, uint8_t rs, uint8_t rt) {
     registers[rd] = registers[rs] + registers[rt];
 }

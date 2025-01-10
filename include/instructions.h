@@ -2,6 +2,9 @@
 #define INSTRUCTIONS_H
 
 #include "memory.h"
+#include "syscall.h"
+
+void decode_instruction(uint32_t instruction);
 
 void add(uint8_t rd, uint8_t rs, uint8_t rt);
 void addu(uint8_t rd, uint8_t rs, uint8_t rt);
