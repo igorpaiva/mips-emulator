@@ -1,0 +1,17 @@
+#include "rktest/rktest.h"
+
+TEST_SETUP(my_test){
+    // Set up before each test (optional)
+}
+
+TEST_TEARDOWN(my_test){
+    // Clean up before each test (optional)
+}
+
+TEST(my_test, test1) {
+    // Test 1 body
+}
+
+TEST(my_test, test2) {
+    // Test 2 body
+}
