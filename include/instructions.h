@@ -4,6 +4,7 @@
 #include "memory.h"
 #include "syscall.h"
 
+void decode_funct(uint8_t funct, uint8_t rs, uint8_t rt, uint8_t rd, uint8_t shamt);
 void decode_instruction(uint32_t instruction);
 
 void add(uint8_t rd, uint8_t rs, uint8_t rt);

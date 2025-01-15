@@ -1,6 +1,51 @@
 #include "instructions.h"
 
-// Arithmetic and Logical Instructions
+void decode_funct(uint8_t funct, uint8_t rs, uint8_t rt, uint8_t rd, uint8_t shamt) {
+    switch (funct) {
+    case 0x00:
+        sll(rd, rt, shamt);
+        break;
+    case 0x02:
+        srl(rd, rt, shamt);
+        break;
+    case 0x08:
+        jr(rs);
+        break;
+    case 0x0C:
+        syscall();
+        break;
+    case 0x20:
+        add(rd, rs, rt);
+        break;
+    case 0x21:
+        addu(rd, rs, rt);
+        break;
+    case 0x22:
+        sub(rd, rs, rt);
+        break;
+    case 0x23:
+        subu(rd, rs, rt);
+        break;
+    case 0x24:
+        and(rd, rs, rt);
+        break;
+    case 0x25:
+        or(rd, rs, rt);
+        break;
+    case 0x27:
+        nor(rd, rs, rt);
+        break;
+    case 0x2A:
+        slt(rd, rs, rt);
+        break;
+    case 0x2B:
+        sltu(rd, rs, rt);
+        break;
+    default:
+        log_error("Unknown or not implemented instruction with funct = %d\n", funct);
+        break;
+    }
+}
 
 void decode_instruction(uint32_t instruction) {
 
@@ -15,9 +60,7 @@ void decode_instruction(uint32_t instruction) {
     switch (opcode) {
         
         case 0x00:
-            if (funct == 0x0C) {  // syscall
-                syscall();
-            }
+            decode_funct(funct, rs, rt, rd, shamt);
             break;
         case 0xF:  // lui
             lui(rt, immediate);
@@ -28,11 +71,55 @@ void decode_instruction(uint32_t instruction) {
         case 0x8:  // addi
             addi(rt, rs, immediate);
             break;
+        case 0x9:  // addiu
+            addiu(rt, rs, immediate);
+            break;
+        case 0xC:  // andi
+            andi(rt, rs, immediate);
+            break;
+        case 0x1A:  // slti
+            slti(rt, rs, immediate);
+            break;
+        case 0x1B:  // sltiu
+            sltiu(rt, rs, immediate);
+            break;
+        case 0x20:  // lb
+            lb(rt, rs, immediate);
+            break;
+        case 0x24:  // lbu
+            lbu(rt, rs, immediate);
+            break;
+        case 0x21:  // lh
+            lh(rt, rs, immediate);
+            break;
+        case 0x25:  // lhu
+            lhu(rt, rs, immediate);
+            break;
+        case 0x23:  // lw
+            lw(rt, rs, immediate);
+            break;
+        case 0x28:  // sb
+            sb(rt, rs, immediate);
+            break;
+        case 0x29:  // sh
+            sh(rt, rs, immediate);
+            break;
+        case 0x2B:  // sw
+            sw(rt, rs, immediate);
+            break;
+        case 0x2:  // j
+            j(instruction & 0x3FFFFFF);
+            break;
+        case 0x3:  // jal
+            jal(instruction & 0x3FFFFFF);
+            break;
         default:
-            log_error("Unknown instruction at pc = %d\n", pc);
+            log_error("Unknown or not implemented instruction at pc = %d\n", pc);
             break;
     }
 }
+
+// Arithmetic and Logical Instructions
 
 void add(uint8_t rd, uint8_t rs, uint8_t rt) {
     registers[rd] = registers[rs] + registers[rt];
@@ -139,7 +226,7 @@ void sltu(uint8_t rd, uint8_t rs, uint8_t rt) {
 }
 
 void slti(uint8_t rt, uint8_t rs, int16_t immediate) {
-    registers[rt] = (registers[rs] < (uint32_t)immediate)? 1 : 0;
+    registers[rt] = ((int32_t)registers[rs] < (int32_t)immediate)? 1 : 0;
 }
 
 void sltiu(uint8_t rt, uint8_t rs, int16_t immediate) {
