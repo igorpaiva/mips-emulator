@@ -6,6 +6,7 @@ The project uses the external libraries [RKtest](https://github.com/Warwolt/rkte
 
 ## Project Structure
 
+```
 mips_emulator/ 
 │    ├── include/ 
 │    │    ├── syscall.h 
@@ -23,6 +24,7 @@ mips_emulator/
 │    │    └── test.template
 │    ├── Makefile 
 └    └── README.md
+```
 
 ## Prerequisites
 
