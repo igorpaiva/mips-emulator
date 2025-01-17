@@ -87,6 +87,12 @@ make coverage
 
 This will run the tests, capture the coverage data using `lcov`, and generate an HTML report in the `out` directory.
 
+### Current code coverage
+
+The current code coverage is shown below:
+
+![image](https://github.com/user-attachments/assets/46bb343d-e0c4-461a-833c-3ededd2e5c8e)
+
 ## Cleaning the build folders and coverage files
 
 To clean the folders created with the previous commands, use:
