@@ -6,6 +6,8 @@ TEST_SETUP(instruction_tests) {
     reset_registers_and_memory();
 }
 
+// R-type instructions
+
 TEST(instruction_tests, test_add) {
     int rd = t0;
     int rs = t1;
@@ -51,6 +53,18 @@ TEST(instruction_tests, test_addu_negative_nums) {
     EXPECT_NE(registers[rd], -15);
     EXPECT_EQ(registers[rd], 0xFFFFFFF8);
 }
+
+TEST(instruction_tests, test_and) {
+    int rd = t0;
+    int rs = t1;
+    int rt = t2;
+    registers[rs] = 0x1234;
+    registers[rt] = 0x5678;
+    and(rd, rs, rt);
+    EXPECT_EQ(registers[rd], 0x1234 & 0x5678);
+}
+
+// I-type and J-type instructions
 
 TEST(instruction_tests, test_lui) {
     int rt = t0;

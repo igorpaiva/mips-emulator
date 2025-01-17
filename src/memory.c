@@ -19,7 +19,7 @@ void reset_pc() {
 
 // Load functions
 
-void load_string_to_memory(const char *string, uint32_t address) {
+void store_string_in_memory(const char *string, uint32_t address) {
     strcpy((char *)memory + address, string);
 }
 

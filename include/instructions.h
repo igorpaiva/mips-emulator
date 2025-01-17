@@ -13,7 +13,7 @@ void addi(uint8_t rt, uint8_t rs, int16_t immediate);
 void addiu(uint8_t rt, uint8_t rs, int16_t immediate);
 void and(uint8_t rd, uint8_t rs, uint8_t rt);
 void andi(uint8_t rt, uint8_t rs, int16_t immediate);
-void div_reg(uint8_t rs, uint8_t rt); //TODO: find a better name, as div conflicts with a function in stdlib.h
+void divr(uint8_t rs, uint8_t rt); //TODO: find a better name, as div conflicts with a function in stdlib.h
 void divu(uint8_t rs, uint8_t rt);
 void mult(uint8_t rs, uint8_t rt);
 void multu(uint8_t rs, uint8_t rt);

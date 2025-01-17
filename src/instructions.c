@@ -8,11 +8,38 @@ void decode_funct(uint8_t funct, uint8_t rs, uint8_t rt, uint8_t rd, uint8_t sha
     case 0x02:
         srl(rd, rt, shamt);
         break;
+    case 0x03:
+        sra(rd, rt, shamt);
+        break;
+    case 0x04:
+        sllv(rd, rt, rs);
+        break;
+    case 0x06:
+        srlv(rd, rt, rs);
+        break;
+    case 0x07:
+        srav(rd, rt, rs);
+        break;
     case 0x08:
         jr(rs);
         break;
+    case 0x09:
+        jalr(rs, rd);
+        break;
     case 0x0C:
         syscall();
+        break;
+    case 0x18:
+        mult(rs, rt);
+        break;
+    case 0x19:
+        multu(rs, rt);
+        break;
+    case 0x1A:
+        divr(rs, rt);
+        break;
+    case 0x1B:
+        divu(rs, rt);
         break;
     case 0x20:
         add(rd, rs, rt);
@@ -31,6 +58,9 @@ void decode_funct(uint8_t funct, uint8_t rs, uint8_t rt, uint8_t rd, uint8_t sha
         break;
     case 0x25:
         or(rd, rs, rt);
+        break;
+    case 0x26:
+        xor(rd, rs, rt);
         break;
     case 0x27:
         nor(rd, rs, rt);
@@ -62,21 +92,48 @@ void decode_instruction(uint32_t instruction) {
         case 0x00:
             decode_funct(funct, rs, rt, rd, shamt);
             break;
-        case 0xF:  // lui
-            lui(rt, immediate);
+        case 0x02:  // j
+            j(instruction & 0x3FFFFFF);
             break;
-        case 0xD:  // ori
-            ori(rt, rs, immediate);
+        case 0x03:  // jal
+            jal(instruction & 0x3FFFFFF);
             break;
-        case 0x8:  // addi
+        case 0x04:  // beq
+            beq(rs, rt, immediate);
+            break;
+        case 0x05:  // bne
+            bne(rs, rt, immediate);
+            break;
+        case 0x06:  // blez
+            blez(rs, immediate);
+            break;
+        case 0x07:  // bgtz
+            bgtz(rs, immediate);
+            break;
+        case 0x08:  // addi
             addi(rt, rs, immediate);
             break;
-        case 0x9:  // addiu
+        case 0x09:  // addiu
             addiu(rt, rs, immediate);
             break;
-        case 0xC:  // andi
+        case 0x0A:  // slti
+            slti(rt, rs, immediate);
+            break;
+        case 0x0B:  // sltiu
+            sltiu(rt, rs, immediate);
+            break;
+        case 0x0C:  // andi
             andi(rt, rs, immediate);
             break;
+        case 0x0D:  // ori
+            ori(rt, rs, immediate);
+            break;
+        case 0x0E:  // xori
+            xori(rt, rs, immediate);
+            break;
+        case 0x0F:  // lui
+            lui(rt, immediate);
+            break;        
         case 0x1A:  // slti
             slti(rt, rs, immediate);
             break;
@@ -86,17 +143,17 @@ void decode_instruction(uint32_t instruction) {
         case 0x20:  // lb
             lb(rt, rs, immediate);
             break;
-        case 0x24:  // lbu
-            lbu(rt, rs, immediate);
-            break;
         case 0x21:  // lh
             lh(rt, rs, immediate);
             break;
-        case 0x25:  // lhu
-            lhu(rt, rs, immediate);
-            break;
         case 0x23:  // lw
             lw(rt, rs, immediate);
+            break;
+        case 0x24:  // lbu
+            lbu(rt, rs, immediate);
+            break;
+        case 0x25:  // lhu
+            lhu(rt, rs, immediate);
             break;
         case 0x28:  // sb
             sb(rt, rs, immediate);
@@ -106,12 +163,6 @@ void decode_instruction(uint32_t instruction) {
             break;
         case 0x2B:  // sw
             sw(rt, rs, immediate);
-            break;
-        case 0x2:  // j
-            j(instruction & 0x3FFFFFF);
-            break;
-        case 0x3:  // jal
-            jal(instruction & 0x3FFFFFF);
             break;
         default:
             log_error("Unknown or not implemented instruction at pc = %d\n", pc);
@@ -145,7 +196,7 @@ void andi(uint8_t rt, uint8_t rs, int16_t immediate) {
     registers[rt] = registers[rs] & (uint16_t)immediate;
 }
 
-void div_reg(uint8_t rs, uint8_t rt) {
+void divr(uint8_t rs, uint8_t rt) {
     registers[32] = registers[rs] / registers[rt];
     registers[33] = registers[rs] % registers[rt];
 }
