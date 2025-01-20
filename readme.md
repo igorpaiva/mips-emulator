@@ -91,7 +91,7 @@ This will run the tests, capture the coverage data using `lcov`, and generate an
 
 The current code coverage is shown below:
 
-![image](https://github.com/user-attachments/assets/46bb343d-e0c4-461a-833c-3ededd2e5c8e)
+![image](https://github.com/user-attachments/assets/cf4e7b61-9d47-4c34-9619-c79b1ca67aa2)
 
 ## Cleaning the build folders and coverage files
 
