@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up dependencies
+      run: sudo apt-get install -y lcov
+
+    - name: Build project
+      run: make
+
+    - name: Run tests
+      run: make test
+
+    - name: Generate coverage report
+      run: |
+        make coverage
+        mkdir -p coverage
+        cp -r out/* coverage/
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage-report
+        path: coverage
