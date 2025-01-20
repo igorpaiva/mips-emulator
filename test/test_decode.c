@@ -62,6 +62,69 @@ TEST(decode_tests, test_decode_instruction_srl){
     EXPECT_EQ(registers[rd], 0x1234 >> 4);
 }
 
+TEST(decode_tests, test_decode_instruction_sra){
+    uint8_t opcode = 0;
+    uint8_t rd = t0;
+    uint8_t rs = t1;
+    uint8_t rt = t2;
+    uint8_t shamt = 4;
+    uint8_t funct = 0x03;
+
+    registers[rt] = 0x1234;
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
+    decode_instruction(instruction);
+    EXPECT_EQ(registers[rd], 0x1234 >> 4);
+}
+
+TEST(decode_tests, test_decode_instruction_sllv){
+    uint8_t opcode = 0;
+    uint8_t rd = t0;
+    uint8_t rs = t1;
+    uint8_t rt = t2;
+    uint8_t shamt = 0;
+    uint8_t funct = 0x04;
+
+    registers[rt] = 0x1234;
+    registers[rs] = 4;
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
+    decode_instruction(instruction);
+    EXPECT_EQ(registers[rd], 0x1234 << 4);
+}
+
+TEST(decode_tests, test_decode_instruction_srlv){
+    uint8_t opcode = 0;
+    uint8_t rd = t0;
+    uint8_t rs = t1;
+    uint8_t rt = t2;
+    uint8_t shamt = 0;
+    uint8_t funct = 0x06;
+
+    registers[rt] = 0x1234;
+    registers[rs] = 4;
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
+    decode_instruction(instruction);
+    EXPECT_EQ(registers[rd], 0x1234 >> 4);
+}
+
+TEST(decode_tests, test_decode_instruction_srav){
+    uint8_t opcode = 0;
+    uint8_t rd = t0;
+    uint8_t rs = t1;
+    uint8_t rt = t2;
+    uint8_t shamt = 0;
+    uint8_t funct = 0x07;
+
+    registers[rt] = 0x1234;
+    registers[rs] = 4;
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
+    decode_instruction(instruction);
+    EXPECT_EQ(registers[rd], 0x1234 >> 4);
+}
+
 TEST(decode_tests, test_decode_instruction_jr){
     uint8_t opcode = 0;
     uint8_t rd = 0;
@@ -74,6 +137,22 @@ TEST(decode_tests, test_decode_instruction_jr){
 
     uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
     decode_instruction(instruction);
+    EXPECT_EQ(pc, 0x1234);
+}
+
+TEST(decode_tests, test_decode_instruction_jalr){
+    uint8_t opcode = 0;
+    uint8_t rd = t0;
+    uint8_t rs = t1;
+    uint8_t rt = 0;
+    uint8_t shamt = 0;
+    uint8_t funct = 0x09;
+
+    registers[rs] = 0x1234;
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
+    decode_instruction(instruction);
+    EXPECT_EQ(registers[rd], pc + 4);
     EXPECT_EQ(pc, 0x1234);
 }
 
@@ -93,6 +172,82 @@ TEST(decode_tests, test_decode_instruction_syscall){
     uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
     decode_instruction(instruction);
     // TODO: Test if the string was logged
+}
+
+TEST(decode_tests, test_decode_instruction_mult){
+    uint8_t opcode = 0;
+    uint8_t rd = 0;
+    uint8_t rs = t1;
+    uint8_t rt = t2;
+    uint8_t shamt = 0;
+    uint8_t funct = 0x18;
+
+    registers[rs] = 0x2;
+    registers[rt] = 0x4;
+
+    uint64_t result = (uint64_t)registers[rs] * (uint64_t)registers[rt];
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
+    decode_instruction(instruction);
+    EXPECT_EQ(registers[hi], result);
+}
+
+TEST(decode_tests, test_decode_instruction_multu){
+    uint8_t opcode = 0;
+    uint8_t rd = 0;
+    uint8_t rs = t1;
+    uint8_t rt = t2;
+    uint8_t shamt = 0;
+    uint8_t funct = 0x19;
+
+    registers[rs] = 0x1234;
+    registers[rt] = 0x5678;
+
+    uint64_t result = (uint64_t)registers[rs] * (uint64_t)registers[rt];
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
+    decode_instruction(instruction);
+    EXPECT_EQ(registers[hi], result);
+}
+
+TEST(decode_tests, test_decode_instruction_divr){
+    uint8_t opcode = 0;
+    uint8_t rd = 0;
+    uint8_t rs = t1;
+    uint8_t rt = t2;
+    uint8_t shamt = 0;
+    uint8_t funct = 0x1A;
+
+    registers[rs] = 0x1234;
+    registers[rt] = 0x5678;
+
+    uint32_t result = registers[rs] / registers[rt];
+    uint32_t remainder = registers[rs] % registers[rt];
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
+    decode_instruction(instruction);
+    EXPECT_EQ(registers[lo], remainder);
+    EXPECT_EQ(registers[hi], result);
+}
+
+TEST(decode_tests, test_decode_instruction_divu){
+    uint8_t opcode = 0;
+    uint8_t rd = 0;
+    uint8_t rs = t1;
+    uint8_t rt = t2;
+    uint8_t shamt = 0;
+    uint8_t funct = 0x1B;
+
+    registers[rs] = 0x1234;
+    registers[rt] = 0x5678;
+
+    uint32_t result = registers[rs] / registers[rt];
+    uint32_t remainder = registers[rs] % registers[rt];
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
+    decode_instruction(instruction);
+    EXPECT_EQ(registers[lo], remainder);
+    EXPECT_EQ(registers[hi], result);
 }
 
 TEST(decode_tests, test_decode_instruction_add){
@@ -189,6 +344,22 @@ TEST(decode_tests, test_decode_instruction_or){
     uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
     decode_instruction(instruction);
     EXPECT_EQ(registers[rd], 0x1234 | 0x5678);
+}
+
+TEST(decode_tests, test_decode_instruction_xor){
+    uint8_t opcode = 0;
+    uint8_t rd = t0;
+    uint8_t rs = t1;
+    uint8_t rt = t2;
+    uint8_t shamt = 0;
+    uint8_t funct = 0x26;
+
+    registers[rs] = 0x1234;
+    registers[rt] = 0x5678;
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (rd << 11) | (shamt << 6) | funct;
+    decode_instruction(instruction);
+    EXPECT_EQ(registers[rd], 0x1234 ^ 0x5678);
 }
 
 TEST(decode_tests, test_decode_instruction_nor){
@@ -307,7 +478,7 @@ TEST(decode_tests, test_decode_instruction_andi){
 }
 
 TEST(decode_tests, test_decode_instruction_slti){
-    uint8_t opcode = 0x1A;
+    uint8_t opcode = 0xA;
     uint8_t rs = t1;
     uint8_t rt = t0;
 
@@ -321,7 +492,7 @@ TEST(decode_tests, test_decode_instruction_slti){
 }
 
 TEST(decode_tests, test_decode_instruction_sltiu){
-    uint8_t opcode = 0x1B;
+    uint8_t opcode = 0xB;
     uint8_t rs = t1;
     uint8_t rt = t0;
 
@@ -331,6 +502,7 @@ TEST(decode_tests, test_decode_instruction_sltiu){
 
     uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (immediate & 0xFFFF);
     decode_instruction(instruction);
+    EXPECT_EQ(registers[rt], 0xFFFFFFF5 < 0x5678);
 }
 
 TEST(decode_tests, test_decode_instruction_lb){
@@ -475,4 +647,74 @@ TEST(decode_tests, test_decode_instruction_jal){
     decode_instruction(instruction);
     EXPECT_EQ(pc, 0x40 << 2);
     EXPECT_EQ(registers[31], 0x104);
+}
+
+TEST(decode_tests, test_decode_instruction_beq){
+    uint8_t opcode = 0x4;
+    uint8_t rs = t1;
+    uint8_t rt = t2;
+
+    int16_t immediate = 0x40;
+
+    registers[rs] = 0x1234;
+    registers[rt] = 0x1234;
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (immediate & 0xFFFF);
+    decode_instruction(instruction);
+    EXPECT_EQ(pc, registers[hi] - 4 + (immediate << 2));
+}
+
+TEST(decode_tests, test_decode_instruction_bne){
+    uint8_t opcode = 0x5;
+    uint8_t rs = t1;
+    uint8_t rt = t2;
+
+    int16_t immediate = 0x40;
+
+    registers[rs] = 0x1234;
+    registers[rt] = 0x5678;
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (immediate & 0xFFFF);
+    decode_instruction(instruction);
+    EXPECT_EQ(pc, registers[hi] - 4 + (immediate << 2));
+}
+
+TEST(decode_tests, test_decode_instruction_blez){
+    uint8_t opcode = 0x6;
+    uint8_t rs = t1;
+
+    int16_t immediate = 0x40;
+
+    registers[rs] = 0x0;
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (immediate & 0xFFFF);
+    decode_instruction(instruction);
+    EXPECT_EQ(pc, registers[hi] - 4 + (immediate << 2));
+}
+
+TEST(decode_tests, test_decode_instruction_bgtz){
+    uint8_t opcode = 0x7;
+    uint8_t rs = t1;
+
+    int16_t immediate = 0x40;
+
+    registers[rs] = 0x1;
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (immediate & 0xFFFF);
+    decode_instruction(instruction);
+    EXPECT_EQ(pc, registers[hi] - 4 + (immediate << 2));
+}
+
+TEST(decode_tests, test_decode_instruction_xori){
+    uint8_t opcode = 0xE;
+    uint8_t rs = t1;
+    uint8_t rt = t0;
+
+    int16_t immediate = 0x5678;
+
+    registers[rs] = 0x1234;
+
+    uint32_t instruction = (opcode << 26) | (rs << 21) | (rt << 16) | (immediate & 0xFFFF);
+    decode_instruction(instruction);
+    EXPECT_EQ(registers[rt], 0x1234 ^ 0x5678);
 }

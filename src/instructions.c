@@ -197,21 +197,21 @@ void andi(uint8_t rt, uint8_t rs, int16_t immediate) {
 }
 
 void divr(uint8_t rs, uint8_t rt) {
-    registers[32] = registers[rs] / registers[rt];
-    registers[33] = registers[rs] % registers[rt];
+    registers[hi] = registers[rs] / registers[rt];
+    registers[lo] = registers[rs] % registers[rt];
 }
 
 void divu(uint8_t rs, uint8_t rt) {
-    registers[32] = registers[rs] / registers[rt];
-    registers[33] = registers[rs] % registers[rt];
+    registers[hi] = registers[rs] / registers[rt];
+    registers[lo] = registers[rs] % registers[rt];
 }
 
 void mult(uint8_t rs, uint8_t rt) {
-    registers[32] = registers[rs] * registers[rt];
+    registers[hi] = registers[rs] * registers[rt];
 }
 
 void multu(uint8_t rs, uint8_t rt) {
-    registers[32] = registers[rs] * registers[rt];
+    registers[hi] = registers[rs] * registers[rt];
 }
 
 void nor(uint8_t rd, uint8_t rs, uint8_t rt) {
@@ -288,28 +288,28 @@ void sltiu(uint8_t rt, uint8_t rs, int16_t immediate) {
 
 void beq(uint8_t rs, uint8_t rt, int16_t immediate) {
     if (registers[rs] == registers[rt]) {
-        registers[32] = pc + 4;
+        registers[hi] = pc + 4;
         pc += immediate << 2;
     }
 }
 
 void bne(uint8_t rs, uint8_t rt, int16_t immediate) {
     if (registers[rs] != registers[rt]) {
-        registers[32] = pc + 4;
+        registers[hi] = pc + 4;
         pc += immediate << 2;
     }
 }
 
 void bgtz(uint8_t rs, int16_t immediate) {
     if (registers[rs] > 0) {
-        registers[32] = pc + 4;
+        registers[hi] = pc + 4;
         pc += immediate << 2;
     }
 }
 
 void blez(uint8_t rs, int16_t immediate) {
     if (registers[rs] <= 0) {
-        registers[32] = pc + 4;
+        registers[hi] = pc + 4;
         pc += immediate << 2;
     }
 }
@@ -321,7 +321,7 @@ void j(uint32_t target) {
 }
 
 void jal(uint32_t target) {
-    registers[31] = pc + 4;
+    registers[ra] = pc + 4;
     pc = (pc & 0xF0000000) | (target << 2);
 }
 

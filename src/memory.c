@@ -13,8 +13,7 @@ void reset_registers_and_memory() {
 }
 
 void reset_pc() {
-    //(TODO: refactor memory division to a more appropriate approach)
-    pc = PC_START; // PC starts at 0x100, from 0x000 to 0x0FF is the text section
+    pc = PC_START;
 }
 
 // Load functions

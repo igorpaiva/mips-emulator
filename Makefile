@@ -47,6 +47,7 @@ test: $(TEST_EXEC)
 
 coverage: test
 	lcov --capture --directory . --output-file coverage.info
+	lcov --remove coverage.info 'test/rktest/*' 'src/log.c' --output-file coverage.info
 	genhtml coverage.info --output-directory out
 
 clean:
