@@ -1,4 +1,4 @@
-[!(CI)https://github.com/igorpaiva/mips-emulator/actions/workflows/ci.yml/badge.svg](https://github.com/igorpaiva/mips-emulator/actions/workflows/ci.yml)
+[![CI](https://github.com/igorpaiva/mips-emulator/actions/workflows/ci.yml/badge.svg)](https://github.com/igorpaiva/mips-emulator/actions/workflows/ci.yml)
 # MIPS emulator
 
 This project is a WIP 32-bit MIPS emulator written in C. It includes functionality to load and execute MIPS instructions, as well as unit tests to verify the correctness of the implementation.
